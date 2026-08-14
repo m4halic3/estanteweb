@@ -1,6 +1,5 @@
 package br.com.estanteweb;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,15 +7,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class LivroController {
-    
+
+    private LivroRepository repository = new LivroRepository();
+
     @GetMapping("/livros")
-    public String listarLivros () {
-        List <Livro> acervo = new ArrayList<>();
-        acervo.add(new Livro("Dom Casmurro", "Machado de Assis", 1899, 29.90));
-        acervo.add(new Livro("1984", "George Orwell", 1949, 29.90));
-        acervo.add(new Livro("O Pequeno Príncipe", "Antoine de Saint-Exupéry", 1943, 19.90));
-        acervo.add(new Livro("O Senhor dos Anéis", "J.R.R. Tolkien", 1954, 49.90));
-        acervo.add(new Livro("O Hobbit", "J.R.R. Tolkien", 1937, 39.90));
+    public String listarLivros() {
+        List<Livro> acervo = repository.listarTodos();
 
         String resposta = "Acervo EstanteWeb: ";
         for (int i = 0; i < acervo.size(); i++) {
@@ -31,15 +27,27 @@ public class LivroController {
     }
 
     @GetMapping("/livros/total")
-    public String totalLivros (){
-        List <Livro> acervo = new ArrayList<>();
-        acervo.add(new Livro("Dom Casmurro", "Machado de Assis", 1899, 29.90));
-        acervo.add(new Livro("1984", "George Orwell", 1949, 29.90));
-        acervo.add(new Livro("O Pequeno Príncipe", "Antoine de Saint-Exupéry", 1943, 19.90));
-        acervo.add(new Livro("O Senhor dos Anéis", "J.R.R. Tolkien", 1954, 49.90));
-        acervo.add(new Livro("O Hobbit", "J.R.R. Tolkien", 1937, 39.90));
+    public String totalLivros() {
+        return "O acervo tem " + repository.contarLivros() + " livros.";
+    }
 
-        int totalLivros = acervo.size();
-        return "O acervo tem " + totalLivros + " livros.";
+    @GetMapping(value = "/livros/html", produces = "text/html")
+    public String listarLivrosHtml() {
+        List<Livro> acervo = repository.listarTodos();
+
+        StringBuilder html = new StringBuilder();
+        html.append("<ul>");
+        for (Livro livro : acervo) {
+            html.append("<li>")
+                .append(livro.getTitulo())
+                .append(", de ")
+                .append(livro.getAutor())
+                .append(" (R$ ")
+                .append(livro.getPreco())
+                .append(")</li>");
+        }
+        html.append("</ul>");
+
+        return html.toString();
     }
 }
