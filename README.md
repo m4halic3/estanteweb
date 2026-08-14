@@ -108,13 +108,6 @@ O projeto evolui aula a aula. Este checklist é atualizado conforme novas camada
 - [x] **Aula 4 — Separação em camadas**: `LivroRepository` isolando os dados do controller
 - [ ] *(próximas entregas serão adicionadas aqui conforme o semestre avança)*
 
-## 🎓 Contexto acadêmico
-
-- **Instituição:** IFSP
-- **Disciplina:** Programação para Web 3
-- **Professor:** Me. Danilo Bueno
-- **Modalidade:** trabalho em dupla, com entregas individuais no Moodle
-
 ## 👥 Autoria
 
 Desenvolvido por Mariana Alice Pires Leite
