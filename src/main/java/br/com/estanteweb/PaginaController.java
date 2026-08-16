@@ -16,9 +16,4 @@ public class PaginaController {
     public String sobre (){
         return "Sebo de bairro especializado em livros usados, com um acervo cuidadosamente selecionado";
     }
-    //Missão 2.3
-    //@GetMapping("/sobre")
-    //public String sobreDuplicado() {
-        //return "Outra descrição da loja";
-    //}
 }
