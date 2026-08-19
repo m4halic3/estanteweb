@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 public class LivroController {
@@ -49,5 +51,21 @@ public class LivroController {
         html.append("</ul>");
 
         return html.toString();
+    }
+
+    @GetMapping("/livros/busca")
+    //public String getMethodName(@RequestParam double precoMaximo) {
+    public String listarLivrosFiltrados(@RequestParam(defaultValue="999") double precoMaximo) {
+
+        List<Livro> livrosFiltrados = repository.listarAtePreco(precoMaximo);
+        String Resp = "Livros com preço até R$ " + precoMaximo + ": ";
+        for (int i = 0; i < livrosFiltrados.size(); i++) {
+            Livro livro = livrosFiltrados.get(i);
+            Resp += livro.getTitulo() + ", de " + livro.getAutor() + " (R$ " + livro.getPreco() + ")";
+            if (i < livrosFiltrados.size() - 1) {
+                Resp += " | ";
+            }
+        }
+        return Resp;
     }
 }

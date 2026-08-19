@@ -16,6 +16,16 @@ public class LivroRepository {
         acervo.add(new Livro("O <b>Grande</b> Gatsby", "F. Scott Fitzgerald", 1925, 34.90));
     }
 
+    public List<Livro> listarAtePreco(double precoMaximo) {
+        List<Livro> livrosFiltrados = new ArrayList<>();
+        for (Livro livro : acervo) {
+            if (livro.getPreco() <= precoMaximo) {
+                livrosFiltrados.add(livro);
+            }
+        }
+        return livrosFiltrados;
+    }
+
     public List<Livro> listarTodos() {
         return acervo;
     }
