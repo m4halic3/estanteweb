@@ -1,50 +1,53 @@
 package br.com.estanteweb;
 
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-@RestController
+@Controller
 public class PaginaController {
 
-    // Missão anterior
+    // Missão 1.1: @ResponseBody para manter texto cru em / e /sobre
     @GetMapping("/")
+    @ResponseBody
     public String boasVindas() {
         return "EstanteWeb: Livros usados com história";
     }
 
-    // Missão anterior
     @GetMapping("/sobre")
+    @ResponseBody
     public String sobre() {
         return "Sebo de bairro especializado em livros usados, com um acervo cuidadosamente selecionado";
     }
 
-    //Aula 03 - Missão 3
-    // 3.1
-    @GetMapping(value = "/contato", produces = "text/html")
-    public String contato() {
-        return "<form method='post' action='/contato'>" +
-               "  <label>Nome: <input type='text' name='nome' /></label><br/>" +
-               "  <label>Mensagem: <input type='text' name='mensagem' /></label><br/>" +
-               "  <button type='submit'>Enviar</button>" +
-               "</form>";
+    // Missão 1.3: GET /contato agora usa Model e retorna o nome da view
+    @GetMapping("/contato")
+    public String contato(Model model) {
+        return "contato";
     }
 
-    // 3.2 e 3.3: 
+    // Missão 2.1 e 3.2: POST /contato com validação "grudenta" + redirect no sucesso
     @PostMapping("/contato")
-    public ResponseEntity<String> receberContato(
-            @RequestParam String nome, 
-            @RequestParam String mensagem) {
-        
-        // 3.3
+    public String receberContato(
+            @RequestParam String nome,
+            @RequestParam String mensagem,
+            Model model) {
+
         if (mensagem == null || mensagem.trim().isEmpty()) {
-            return ResponseEntity.status(400).body("Erro: A mensagem não pode estar em branco.");
+            model.addAttribute("erro", "A mensagem não pode estar em branco.");
+            model.addAttribute("nome", nome);
+            return "contato";
         }
-        
-        return ResponseEntity.ok("Obrigado, " + nome + "! Sua mensagem foi recebida.");
+
+        return "redirect:/contato/sucesso";
     }
 
-    //Resposta da atividade: Ao enviar o formulário, o navegador me levou para uma nova página com a resposta do servidor sem precisar de JavaScript porque os atributos method="post" e action="/contato" na tag <form> instruem nativamente o navegador a realizar essa submissão HTTP.
+    // Missão 3.1: rota de confirmação
+    @GetMapping("/contato/sucesso")
+    public String contatoSucesso() {
+        return "contato-sucesso";
+    }
 }
