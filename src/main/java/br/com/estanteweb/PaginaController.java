@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class PaginaController {
 
-    // Missão 1.1: @ResponseBody para manter texto cru em / e /sobre
     @GetMapping("/")
     @ResponseBody
     public String boasVindas() {
@@ -23,13 +22,11 @@ public class PaginaController {
         return "Sebo de bairro especializado em livros usados, com um acervo cuidadosamente selecionado";
     }
 
-    // Missão 1.3: GET /contato agora usa Model e retorna o nome da view
     @GetMapping("/contato")
     public String contato(Model model) {
         return "contato";
     }
 
-    // Missão 2.1 e 3.2: POST /contato com validação "grudenta" + redirect no sucesso
     @PostMapping("/contato")
     public String receberContato(
             @RequestParam String nome,
@@ -45,7 +42,6 @@ public class PaginaController {
         return "redirect:/contato/sucesso";
     }
 
-    // Missão 3.1: rota de confirmação
     @GetMapping("/contato/sucesso")
     public String contatoSucesso() {
         return "contato-sucesso";

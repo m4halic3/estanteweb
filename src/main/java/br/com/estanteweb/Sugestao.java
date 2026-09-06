@@ -1,9 +1,5 @@
 package br.com.estanteweb;
 
-
-//Aula 03 - missão 4
-
-//4.1
 public class Sugestao {
     private String nomeCliente;
     private String livroSugerido;

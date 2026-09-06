@@ -3,7 +3,6 @@ package br.com.estanteweb;
 import java.util.ArrayList;
 import java.util.List;
 
-// Aula 03 - missão 4
 public class SugestaoRepository {
     private List<Sugestao> sugestoes;
 
