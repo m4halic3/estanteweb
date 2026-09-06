@@ -7,7 +7,7 @@
     <#else>
         <ul>
             <#list sugestoes as sugestao>
-                <li>${sugestao}</li>
+                <li>${sugestao.nomeCliente} sugeriu: ${sugestao.livroSugerido}</li>
             </#list>
         </ul>
     </#if>
