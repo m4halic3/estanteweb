@@ -1,5 +1,6 @@
 package br.com.estanteweb;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,7 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class SugestaoController {
 
-    private SugestaoRepository repository = new SugestaoRepository();
+    @Autowired
+    private SugestaoRepository repository;
 
     @GetMapping("/sugestoes/nova")
     public String formulario(Model model) {
@@ -31,14 +33,14 @@ public class SugestaoController {
         }
 
         Sugestao sugestao = new Sugestao(nomeCliente, livroSugerido);
-        repository.adicionarSugestao(sugestao);
+        repository.salvar(sugestao);
 
         return "redirect:/sugestoes";
     }
 
     @GetMapping("/sugestoes")
     public String listarSugestoes(Model model) {
-        model.addAttribute("sugestoes", repository.listarSugestoes());
+        model.addAttribute("sugestoes", repository.listarTodas());
         return "sugestoes";
     }
 }

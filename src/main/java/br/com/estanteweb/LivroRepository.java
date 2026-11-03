@@ -2,35 +2,54 @@ package br.com.estanteweb;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+
+@Repository
 public class LivroRepository {
 
-    private List<Livro> acervo = new ArrayList<>();
-
-    public LivroRepository() {
-        acervo.add(new Livro("Dom Casmurro", "Machado de Assis", 1899, 29.90));
-        acervo.add(new Livro("1984", "George Orwell", 1949, 29.90));
-        acervo.add(new Livro("O Pequeno Príncipe", "Antoine de Saint-Exupéry", 1943, 19.90));
-        acervo.add(new Livro("O Senhor dos Anéis", "J.R.R. Tolkien", 1954, 49.90));
-        acervo.add(new Livro("O Hobbit", "J.R.R. Tolkien", 1937, 39.90));
-        acervo.add(new Livro("O <b>Grande</b> Gatsby", "F. Scott Fitzgerald", 1925, 34.90));
-    }
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     public List<Livro> listarAtePreco(double precoMaximo) {
+        String sql = "SELECT * FROM livro WHERE preco <= ?";
+        List<Map<String, Object>> linhas = jdbcTemplate.queryForList(sql, precoMaximo);
+
         List<Livro> livrosFiltrados = new ArrayList<>();
-        for (Livro livro : acervo) {
-            if (livro.getPreco() <= precoMaximo) {
-                livrosFiltrados.add(livro);
-            }
+        for (Map<String, Object> linha : linhas) {
+            livrosFiltrados.add(Livro.deMap(linha));
         }
         return livrosFiltrados;
     }
 
     public List<Livro> listarTodos() {
-        return acervo;
+        String sql = "SELECT * FROM livro";
+        List<Map<String, Object>> linhas = jdbcTemplate.queryForList(sql);
+
+        List<Livro> livros = new ArrayList<>();
+        for (Map<String, Object> linha : linhas) {
+            livros.add(Livro.deMap(linha));
+        }
+        return livros;
     }
 
     public int contarLivros() {
-        return acervo.size();
+        String sql = "SELECT COUNT(*) FROM livro";
+        return jdbcTemplate.queryForObject(sql, Integer.class);
+    }
+
+
+    //concluindo a atividade da missão 2
+    public Double somarValorAcervo() {
+        String sql = "SELECT SUM(preco) FROM livro";
+        return jdbcTemplate.queryForObject(sql, Double.class);
+    }
+
+    public void salvar(Livro livro) {
+        String sql = "INSERT INTO livro (titulo, autor, ano, preco) VALUES (?, ?, ?, ?)";
+        jdbcTemplate.update(sql, livro.getTitulo(), livro.getAutor(), livro.getAno(), livro.getPreco());
     }
 }

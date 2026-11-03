@@ -1,3 +1,6 @@
-INSERT INTO livro (titulo, autor, ano_publicacao, status) VALUES ('<b>Dom Casmurro</b>', 'Machado de Assis', 1899, 'Disponível');
-INSERT INTO livro (titulo, autor, ano_publicacao, status) VALUES ('O Cortiço', 'Aluísio Azevedo', 1890, 'Lido');
-INSERT INTO livro (titulo, autor, ano_publicacao, status) VALUES ('Memórias Póstumas de Brás Cubas', 'Machado de Assis', 1881, 'Disponível');
+INSERT INTO livro (titulo, autor, ano, preco) VALUES ('Dom Casmurro', 'Machado de Assis', 1899, 29.90);
+INSERT INTO livro (titulo, autor, ano, preco) VALUES ('1984', 'George Orwell', 1949, 29.90);
+INSERT INTO livro (titulo, autor, ano, preco) VALUES ('O Pequeno Príncipe', 'Antoine de Saint-Exupéry', 1943, 19.90);
+INSERT INTO livro (titulo, autor, ano, preco) VALUES ('O Senhor dos Anéis', 'J.R.R. Tolkien', 1954, 49.90);
+INSERT INTO livro (titulo, autor, ano, preco) VALUES ('O Hobbit', 'J.R.R. Tolkien', 1937, 39.90);
+INSERT INTO livro (titulo, autor, ano, preco) VALUES ('O <b>Grande</b> Gatsby', 'F. Scott Fitzgerald', 1925, 34.90);

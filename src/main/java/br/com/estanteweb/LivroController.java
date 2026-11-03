@@ -2,8 +2,10 @@ package br.com.estanteweb;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -13,7 +15,8 @@ import org.springframework.ui.Model;
 @Controller
 public class LivroController {
 
-    private LivroRepository repository = new LivroRepository();
+    @Autowired
+    private LivroRepository repository;
 
     @GetMapping("/livros")
     @ResponseBody
@@ -38,11 +41,54 @@ public class LivroController {
         return "O acervo tem " + repository.contarLivros() + " livros.";
     }
 
+    @GetMapping("/livros/valor-total")
+    @ResponseBody
+    public String valorTotal() {
+        return "O valor total do acervo é R$ " + repository.somarValorAcervo();
+    }
+
     @GetMapping("/livros/html")
     public String listarLivrosHtml(Model container) {
         List<Livro> acervo = repository.listarTodos();
         container.addAttribute("livros", acervo);
         return "livros";
+    }
+
+    @GetMapping("/livros/novo")
+    public String novoLivro() {
+        return "livro-novo";
+    }
+
+    @PostMapping("/livros")
+    public String salvarLivro(@RequestParam String titulo, @RequestParam String autor,
+                              @RequestParam int ano, @RequestParam double preco,
+                              Model container) {
+        String erro = null;
+        if (titulo.isBlank()) {
+            erro = "O título é obrigatório.";
+        } else if (autor.isBlank()) {
+            erro = "O autor é obrigatório.";
+        } else if (preco <= 0) {
+            erro = "O preço deve ser maior que zero.";
+        }
+
+        if (erro != null) {
+            container.addAttribute("erro", erro);
+            container.addAttribute("titulo", titulo);
+            container.addAttribute("autor", autor);
+            container.addAttribute("ano", ano);
+            container.addAttribute("preco", preco);
+            return "livro-novo";
+        }
+
+        Livro livro = new Livro();
+        livro.setTitulo(titulo);
+        livro.setAutor(autor);
+        livro.setAno(ano);
+        livro.setPreco(preco);
+
+        repository.salvar(livro);
+        return "redirect:/livros/html";
     }
 
     @GetMapping("/livros/busca")
