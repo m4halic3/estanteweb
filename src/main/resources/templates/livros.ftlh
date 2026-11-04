@@ -7,7 +7,7 @@
     <#else>
         <ul>
             <#list livros as livro>
-                <li>${livro.titulo}, de ${livro.autor} (R$ ${livro.preco?c})</li>
+                <li><a href="/livros/${livro.id?c}">${livro.titulo}</a>, de ${livro.autor} (R$ ${livro.preco?c})</li>
             </#list>
         </ul>
     </#if>
