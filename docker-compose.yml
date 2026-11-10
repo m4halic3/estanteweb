@@ -1,0 +1,17 @@
+services:
+  mysql:
+    image: mysql:8
+    container_name: mysql-estanteweb
+    restart: unless-stopped
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+    volumes:
+      - estanteweb-data:/var/lib/mysql
+
+volumes:
+  estanteweb-data:
+    external: true
+    name: e328ee779f37b10dcfec85fc5bfed7e91ce4e0d6db675e7b42638573c1d33954
