@@ -123,6 +123,45 @@ public class LivroController {
         return "Você acessou usando o cliente: " + userAgent;
     }
 
+    @GetMapping ("/livros/{id}/editar")
+    public String formularioEdicao(@PathVariable Long id, Model container) {
+        Livro livro = repository.buscarPorId(id);
+        if (livro == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        container.addAttribute("livro", livro);
+        return "livro-editar";
+    }
+
+    @PostMapping ("/livros/{id}/editar")
+    public String salvarEdicao(@PathVariable Long id, @RequestParam String titulo, @RequestParam String autor,
+        @RequestParam int ano, @RequestParam double preco,Model container) {
+        Livro livro = repository.buscarPorId(id);
+        if (livro == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        livro.setTitulo(titulo);
+        livro.setAutor(autor);
+        livro.setAno(ano);
+        livro.setPreco(preco);
+        String erro = null;
+        if (titulo.isBlank()) {
+            erro = "O título é obrigatório.";
+        } else if (autor.isBlank()) {
+            erro = "O autor é obrigatório.";
+        } else if (preco <= 0) {        
+            erro = "O preço deve ser maior que zero.";
+        }
+
+        if (erro != null) {
+            container.addAttribute("erro", erro);
+            container.addAttribute("livro", livro);
+            return "livro-editar";
+        }
+        repository.atualizar(livro);
+        return "redirect:/livros/" + id;
+    }
+
     @GetMapping("/livros/{id}")
     public String detalheLivro(@PathVariable Long id, Model container) {
         Livro livro = repository.buscarPorId(id);

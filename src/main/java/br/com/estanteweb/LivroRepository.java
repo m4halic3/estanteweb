@@ -44,7 +44,11 @@ public class LivroRepository {
         jdbcTemplate.update(sql, livro.getTitulo(), livro.getAutor(), livro.getAno(), livro.getPreco());
     }
 
-    // missão 1: busca um único livro pelo id; devolve null se não existir
+    public void atualizar(Livro livro) {
+        String sql = "UPDATE livro SET titulo = ?, autor = ?, ano = ?, preco = ? WHERE id = ?";
+        jdbcTemplate.update(sql, livro.getTitulo(), livro.getAutor(), livro.getAno(), livro.getPreco(), livro.getId());
+    }
+
     public Livro buscarPorId(Long id) {
         String sql = "SELECT * FROM livro WHERE id = ?";
         List<Map<String, Object>> linhas = jdbcTemplate.queryForList(sql, id);
@@ -54,9 +58,8 @@ public class LivroRepository {
         return Livro.deMap(linhas.get(0));
     }
 
-    // missão 4: ordena só por colunas permitidas; qualquer outro valor cai na listagem padrão.
-    // A coluna é concatenada porque o "?" só substitui valores, nunca nomes de coluna,
-    // por isso a lista de colunas permitidas evita SQL injection.
+   
+    
     public List<Livro> listarOrdenadoPor(String coluna) {
         if (coluna == null || !COLUNAS_PERMITIDAS.contains(coluna)) {
             return listarTodos();
@@ -66,14 +69,12 @@ public class LivroRepository {
         return converter(linhas);
     }
 
-    // missão 4.4 (desafio): outros livros do mesmo autor, sem o livro atual
     public List<Livro> listarDoMesmoAutor(String autor, Long idAtual) {
         String sql = "SELECT * FROM livro WHERE autor = ? AND id <> ?";
         List<Map<String, Object>> linhas = jdbcTemplate.queryForList(sql, autor, idAtual);
         return converter(linhas);
     }
 
-    // transforma as linhas do banco em objetos Livro
     private List<Livro> converter(List<Map<String, Object>> linhas) {
         List<Livro> livros = new ArrayList<>();
         for (Map<String, Object> linha : linhas) {
