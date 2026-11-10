@@ -98,16 +98,6 @@ estanteweb/
 └── README.md
 ```
 
-## 🗺️ Roadmap do semestre
-
-O projeto evolui aula a aula. Este checklist é atualizado conforme novas camadas e funcionalidades são incorporadas.
-
-- [x] **Aula 1 — Servidor no ar**: projeto gerado via Spring Initializr, servidor Spring Boot rodando
-- [x] **Aula 2 — Primeiras rotas**: `PaginaController` com rotas `/` e `/sobre`
-- [x] **Aula 3 — Modelo do acervo**: classe `Livro` e rota `/livros` com listagem
-- [x] **Aula 4 — Separação em camadas**: `LivroRepository` isolando os dados do controller
-- [ ] *(próximas entregas serão adicionadas aqui conforme o semestre avança)*
-
 ## 👥 Autoria
 
 Desenvolvido por Mariana Alice Pires Leite
