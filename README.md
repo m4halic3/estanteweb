@@ -1,107 +1,143 @@
-# 📚 EstanteWeb
+# EstanteWeb
 
-> Sistema web para um sebo de bairro — desenvolvido como projeto contínuo da disciplina **Programação para Web 3** (IFSP), sob orientação do Prof. Me. Danilo Bueno.
+Sistema web para um sebo de bairro, desenvolvido como projeto contínuo da disciplina **Programação para Web 3** (IFSP), com orientação do Prof. Me. Danilo Bueno.
 
-![Java](https://img.shields.io/badge/Java-21-orange?logo=openjdk)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-MVC-brightgreen?logo=springboot)
-![Maven](https://img.shields.io/badge/build-Maven-blue?logo=apachemaven)
-![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow)
+## Sobre o projeto
 
----
+A EstanteWeb é um sebo que vende livros usados e mantinha todo o acervo anotado em um caderno. A ideia do projeto é levar a loja para a Web usando Spring Boot e o padrão MVC.
 
-## 📖 Sobre o projeto
+O sistema é construído aos poucos ao longo do semestre: cada aula ou missão acrescenta uma funcionalidade nova em cima do que já existe.
 
-A **EstanteWeb** é um sebo de bairro que vende livros usados. Até então, o acervo inteiro vivia em um caderno físico — cada consulta de um cliente exigia folhear páginas à mão. Este projeto leva a loja para a Web, construindo o sistema **desde o início de forma organizada**, aplicando o padrão arquitetural **MVC (Model-View-Controller)** com **Spring Boot**.
-
-O projeto é construído **de forma incremental ao longo do semestre**: cada etapa (aula/missão) adiciona uma nova camada ou funcionalidade sobre a anterior, sem quebrar o que já existe.
-
-## 🏗️ Arquitetura
-
-O projeto segue o padrão **MVC**, com separação clara de responsabilidades:
+## Arquitetura
 
 ```
-Requisição HTTP → Controller → Repository → Model
+Requisição HTTP → Controller → Repository → Banco (MySQL)
                        ↓
-                    Resposta
+              Template (FreeMarker) / resposta
 ```
 
-- **Model** (`Livro`): representa os dados do domínio (título, autor, ano, preço). Não possui nenhuma anotação HTTP/Spring — não sabe (e não deve saber) que existe uma Web por trás dele.
-- **Controller** (`PaginaController`, `LivroController`): recebe requisições HTTP, mapeia rotas e delega o acesso aos dados ao Repository.
-- **Repository** (`LivroRepository`): concentra o acesso e a manipulação dos dados do acervo, isolando essa lógica do Controller.
+- **Model** (`Livro`, `Sugestao`): classes com os dados do domínio.
+- **Controller** (`PaginaController`, `LivroController`, `SugestaoController`, `ReservaController`): recebem as requisições e devolvem uma página ou um texto.
+- **Repository** (`LivroRepository`, `SugestaoRepository`): fazem as consultas no banco com `JdbcTemplate`.
+- **Templates** (`src/main/resources/templates`): páginas em FreeMarker (`.ftlh`).
 
-## 🛠️ Tecnologias
+As tabelas são criadas pelo Flyway, a partir dos scripts em `src/main/resources/db/migration`. O script `V3` já insere alguns livros no acervo.
 
-| Tecnologia | Versão / Detalhe |
-|---|---|
-| Java | 21 (Eclipse Temurin) |
-| Spring Boot | versão estável mais recente |
-| Spring Web | dependência principal |
-| Maven | gerenciador de build (via Maven Wrapper `mvnw`) |
-| Group / Artifact | `br.com.estanteweb` |
+## Tecnologias
 
-## ✅ Pré-requisitos
+- Java 21
+- Spring Boot 4 (Web, Data JPA, DevTools)
+- FreeMarker
+- MySQL 8 (rodando no Docker)
+- Flyway
+- Maven (via Maven Wrapper)
 
-- [JDK 21](https://adoptium.net/) instalado e configurado no `PATH`
-- [VS Code](https://code.visualstudio.com/) com a extensão **Extension Pack for Java**
+## Pré-requisitos
+
+- JDK 21
+- Docker e Docker Compose
 - Git
 
-Verifique o ambiente antes de rodar o projeto:
+O Maven não precisa estar instalado, o projeto usa o `mvnw`.
 
-```bash
-java -version     # deve exibir versão 21
-code --version    # confirma o VS Code no PATH
+## Banco de dados com Docker
+
+O MySQL roda em um container definido no `docker-compose.yml`. A porta do container (3306) foi mapeada para a **3307** da máquina, para não conflitar com um MySQL que já esteja instalado localmente.
+
+1. Crie um arquivo `.env` na raiz do projeto (ele não vai para o repositório):
+
+   ```env
+   DB_PASSWORD=sua_senha
+   DB_NAME=estanteweb
+   ```
+
+2. O volume dos dados está marcado como `external`, então ele precisa existir antes de subir o container. Se for a primeira vez, crie com o mesmo nome que está no `docker-compose.yml`:
+
+   ```bash
+   docker volume create e328ee779f37b10dcfec85fc5bfed7e91ce4e0d6db675e7b42638573c1d33954
+   ```
+
+3. Suba o banco:
+
+   ```bash
+   docker compose up -d
+   ```
+
+Para parar o container: `docker compose down` (os dados continuam salvos no volume).
+
+A conexão da aplicação fica em `src/main/resources/application.properties`:
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3307/estanteweb
+spring.datasource.username=root
+spring.datasource.password=sua_senha
 ```
 
-> O Maven não precisa estar instalado globalmente — o projeto já traz o Maven Wrapper (`mvnw`).
+A senha precisa ser a mesma do `DB_PASSWORD` no `.env`.
 
-## 🚀 Como executar
+## Como executar
 
 ```bash
-# clone o repositório
 git clone https://github.com/<seu-usuario>/estanteweb.git
 cd estanteweb
 
-# execute a aplicação
+docker compose up -d
 ./mvnw spring-boot:run
 ```
 
-A aplicação sobe por padrão em `http://localhost:8080`.
+A aplicação sobe em `http://localhost:8080`. Na primeira execução o Flyway cria as tabelas automaticamente.
 
-## 🔌 Endpoints disponíveis
+## Rotas
 
 | Método | Rota | Descrição |
 |---|---|---|
-| `GET` | `/` | Mensagem de boas-vindas da loja |
-| `GET` | `/sobre` | Descrição da EstanteWeb |
-| `GET` | `/livros` | Lista o acervo (título, autor e preço) |
-| `GET` | `/livros/total` | Retorna a quantidade de livros no acervo |
-| `GET` | `/livros/html` | *(desafio)* Acervo renderizado como lista HTML |
+| GET | `/` | Mensagem de boas-vindas |
+| GET | `/sobre` | Descrição da loja |
+| GET | `/contato` | Formulário de contato |
+| POST | `/contato` | Envia o formulário de contato |
+| GET | `/contato/sucesso` | Confirmação do contato |
+| GET | `/livros` | Lista o acervo em texto |
+| GET | `/livros/html` | Lista o acervo em página HTML (aceita `?ordem=titulo`, `autor`, `ano` ou `preco`) |
+| GET | `/livros/total` | Quantidade de livros no acervo |
+| GET | `/livros/valor-total` | Soma dos preços do acervo |
+| GET | `/livros/busca` | Livros até um preço (`?precoMaximo=30`) |
+| GET | `/livros/novo` | Formulário de cadastro de livro |
+| POST | `/livros` | Cadastra um livro |
+| GET | `/livros/{id}` | Detalhes de um livro e outros do mesmo autor |
+| GET | `/livros/quem-acessa` | Mostra o User-Agent de quem acessou |
+| GET | `/sugestoes/nova` | Formulário de sugestão de livro |
+| POST | `/sugestoes` | Salva uma sugestão |
+| GET | `/sugestoes` | Lista as sugestões recebidas |
+| POST | `/reserva` | Recebe uma reserva (nome e telefone) |
+| GET | `/ola` | Página de teste do FreeMarker |
 
-## 📁 Estrutura do projeto
+## Estrutura
 
 ```
 estanteweb/
-├── src/
-│   └── main/
-│       ├── java/br/com/estanteweb/
-│       │   ├── EstantewebApplication.java
-│       │   ├── controller/
-│       │   │   ├── PaginaController.java
-│       │   │   └── LivroController.java
-│       │   ├── model/
-│       │   │   └── Livro.java
-│       │   └── repository/
-│       │       └── LivroRepository.java
-│       └── resources/
-│           └── application.properties
+├── src/main/
+│   ├── java/br/com/estanteweb/
+│   │   ├── EstantewebApplication.java
+│   │   ├── Livro.java
+│   │   ├── LivroController.java
+│   │   ├── LivroRepository.java
+│   │   ├── Sugestao.java
+│   │   ├── SugestaoController.java
+│   │   ├── SugestaoRepository.java
+│   │   ├── PaginaController.java
+│   │   ├── ReservaController.java
+│   │   └── TesteController.java
+│   └── resources/
+│       ├── application.properties
+│       ├── db/migration/
+│       └── templates/
+├── docker-compose.yml
 ├── pom.xml
 └── README.md
 ```
 
-## 👥 Autoria
+## Autoria
 
-Desenvolvido por Mariana Alice Pires Leite
+Desenvolvido por Mariana Alice Pires Leite.
 
-## 📄 Licença
-
-Projeto acadêmico, desenvolvido para fins didáticos.
+Projeto acadêmico, feito para fins didáticos.
