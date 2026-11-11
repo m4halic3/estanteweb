@@ -18,4 +18,7 @@
 
 <p><a href="/livros/html">Voltar para o acervo</a></p>
 
-<a href="/livros/${livro.id?c}/editar">Corrigir</a>
+<p><a href="/livros/${livro.id?c}/editar">Corrigir</a></p>
+<form method="post" action="/livros/${livros.id?c}/excluir">
+    <button type="submit">Excluir</button>
+</form>

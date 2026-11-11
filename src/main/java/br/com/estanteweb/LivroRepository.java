@@ -49,6 +49,11 @@ public class LivroRepository {
         jdbcTemplate.update(sql, livro.getTitulo(), livro.getAutor(), livro.getAno(), livro.getPreco(), livro.getId());
     }
 
+    public void excluir(Long id) {
+        String sql = "DELETE FROM livro WHERE id = ?";
+        jdbcTemplate.update(sql, id);
+    }
+
     public Livro buscarPorId(Long id) {
         String sql = "SELECT * FROM livro WHERE id = ?";
         List<Map<String, Object>> linhas = jdbcTemplate.queryForList(sql, id);
@@ -58,8 +63,6 @@ public class LivroRepository {
         return Livro.deMap(linhas.get(0));
     }
 
-   
-    
     public List<Livro> listarOrdenadoPor(String coluna) {
         if (coluna == null || !COLUNAS_PERMITIDAS.contains(coluna)) {
             return listarTodos();
