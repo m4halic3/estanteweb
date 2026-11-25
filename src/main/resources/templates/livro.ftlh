@@ -18,5 +18,7 @@
 
 <p><a href="/livros/html">Voltar para o acervo</a></p>
 
-<p><a href="/livros/${livro.id?c}/editar">Corrigir</a></p>
-<p><a href="/livros/${livro.id?c}/excluir">Excluir</a></p>
+<#if usuarioLogado??>
+    <p><a href="/livros/${livro.id?c}/editar">Corrigir</a></p>
+    <p><a href="/livros/${livro.id?c}/excluir">Excluir</a></p>
+</#if>

@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.server.ResponseStatusException;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 public class LivroController {
 
@@ -124,7 +126,11 @@ public class LivroController {
     }
 
     @GetMapping("/livros/{id}/editar")
-    public String editarLivro(@PathVariable Long id, Model container) {
+    public String editarLivro(@PathVariable Long id, Model container, HttpSession session) {
+        if (session.getAttribute("usuarioLogado") == null) {
+            return "redirect:/login";
+        }
+
         Livro livro = repository.buscarPorId(id);
         if (livro == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -136,7 +142,11 @@ public class LivroController {
     @PostMapping("/livros/{id}")
     public String salvarEdicao(@PathVariable Long id, @RequestParam String titulo, @RequestParam String autor,
                                @RequestParam int ano, @RequestParam double preco,
-                               Model container) {
+                               Model container, HttpSession session) {
+        if (session.getAttribute("usuarioLogado") == null) {
+            return "redirect:/login";
+        }
+
         Livro livro = new Livro();
         livro.setId(id);
         livro.setTitulo(titulo);

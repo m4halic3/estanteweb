@@ -2,6 +2,10 @@
 
 <h1>Lista de Livros</h1>
 
+<#if usuarioLogado??>
+    <p><a href="/livros/novo">Cadastrar livro novo</a></p>
+</#if>
+
     <#if livros?size == 0>
         <p>Nenhum livro no acervo no momento.</p>
     <#else>
